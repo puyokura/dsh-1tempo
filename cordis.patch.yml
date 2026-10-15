@@ -1,0 +1,15 @@
+# 1tempo (MiL-Bridge) bundle patch.
+#
+# A package counts as a bundle when its package.json declares
+# `dsh.bundle.patch` (see the package.json in this repository). dsh's plugin
+# manager installs the package with pnpm, enables the bundle, and applies this
+# patch, so no hand edit of the profile's cordis.patch.yml is needed.
+#
+# The row names this package, which the profile resolves from its own
+# node_modules — the same shape dsh-web-mobile uses.
+- insert:
+    - id: onetempo
+      name: 'dsh-plugin-1tempo'
+      config:
+        model: sarashina3-nano
+        specPreamble: off

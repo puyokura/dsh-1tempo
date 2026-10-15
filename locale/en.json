@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "1tempo (MiL-Bridge)",
+    "description": "Convert a request into MiL with Sarashina, review it, then hand it to the model dsh is running. Works in the TUI and the Web UI."
+  }
+}

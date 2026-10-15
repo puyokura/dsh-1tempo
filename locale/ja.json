@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "1tempo (MiL-Bridge)",
+    "description": "依頼文を Sarashina で MiL に変換し、承認してから dsh が動かしているモデルへ渡すプラグイン。TUI と Web UI の両方で動く。"
+  }
+}

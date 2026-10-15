@@ -1,7 +1,7 @@
 {
   "name": "dsh-plugin-1tempo",
-  "version": "0.1.0",
-  "description": "MiL-Bridge: convert a Japanese request into MiL via the Sarashina API, get approval, and hand it to the selected dsh model",
+  "version": "0.1.1",
+  "description": "MiL-Bridge: convert a request into MiL with Sarashina, review it, then hand it to the model dsh is running (TUI and Web UI)",
   "license": "MIT",
   "author": "puyokura",
   "repository": {
@@ -10,7 +10,28 @@
   },
   "type": "module",
   "main": "index.mjs",
-  "private": true,
+  "files": [
+    "index.mjs",
+    "src/",
+    "mil-spec/",
+    "locale/",
+    "cordis.patch.yml",
+    "README.md",
+    "architecture.md",
+    "dsh-feature-request.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "mil",
+    "sarashina",
+    "deepseek"
+  ],
   "scripts": {
     "test": "node --test \"tests/*.test.mjs\"",
     "preflight": "node tools/preflight-decode.mjs"

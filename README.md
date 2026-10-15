@@ -75,6 +75,24 @@ node tools/preflight-decode.mjs --dry
 
 ## インストール（dsh への登録）
 
+このリポジトリは **dsh の bundle パッケージ**として作ってある（`package.json` の `dsh.bundle.patch` → `cordis.patch.yml`）。したがって、**展開も手作業の設定も不要**で、dsh のプラグイン管理から spec を指定するだけで入る。
+
+### 1. Web UI の Plugins ページから（推奨）
+
+サイドバーの **Plugins** ページで追加先に次を入れて Install する。
+
+```
+github:puyokura/dsh-1tempo
+```
+
+- dsh のプラグイン管理（`@deepseek-ai/dsh-plugin-manager`）が `pnpm add` でこのリポジトリをプロファイルへ入れ、**bundle を既定で有効化**し、同梱の `cordis.patch.yml` の行を適用する。手で `cordis.patch.yml` を編集する必要はない。
+- プロファイルが HMR 有効（`patchReload: live`）ならその場で反映される。無効なら dsh を再起動する。
+- 削除も同じページから行える（`pnpm remove` 相当）。
+
+エージェント経由なら `plugin_manager` ツールの `install_bundle` に同じ spec を渡す（Creator 系プリセットで有効。実行には `danger-full-access` か承認が要る）。
+
+### 2. プロファイルのパッチへ直接書く（手動・従来の方法）
+
 プロファイルのパッチ（例: `~/.dsh/profiles/dsh-tui/cordis.patch.yml`）の `insert:` に 1 行追加する。
 
 ```yaml
@@ -88,6 +106,7 @@ node tools/preflight-decode.mjs --dry
 - `name` は `index.mjs` の絶対パス。Windows ではスラッシュ区切りで書く（例: `C:/Users/you/1tempo-pulgin/index.mjs`）。
 - `id` は設定画面が設定セクションを引く名前空間になる。`/^[a-z][a-z0-9_-]*$/` に一致する必要がある（`1tempo` は不可）。
 - `config` は省略可能。省略時は下記の既定値が使われる。
+- **1 と 2 を同じプロファイルで併用しない**（同じ `id: onetempo` が二重になる）。bundle として入れた場合は手動の行を消す。
 - 読み込みに失敗すると dsh の起動がロールバックする。戻すときはこの 4 行を削除する。
 
 ### Web UI（プロファイル `web`）
@@ -168,6 +187,8 @@ node --test "tests/*.test.mjs"     # 173 件
 | パス | 内容 |
 | --- | --- |
 | `index.mjs` | プラグイン本体（`name` / `inject` / `apply`、コマンド引数の解釈、変換フロー、ダイアログ、接点の登録） |
+| `cordis.patch.yml` | bundle として配布するためのパッチ（`- id: onetempo` の 1 行）。`package.json` の `dsh.bundle.patch` が指す |
+| `locale/{en,ja}.json` | dsh のプラグイン一覧に出す表示名と説明（`meta.title` / `meta.description`） |
 | `src/delivery.mjs` | 承認後の送信（通知の組み立て、送信本文、エージェント選択、ログ結果の報告） |
 | `src/seams.mjs` | 任意接点の soft probe（無い構成でも落とさない） |
 | `src/interaction.mjs` | 対話接点の抽象化。TUI は `ctx.tuiDialogs`（初期値つき）、Web は `ctx.userQuestions`（自由記述のみ・初期値なし・タイムアウト無し＝自前の signal で bound）。どちらも無ければ `unavailable` を返し、未確認の MiL を送らない |
