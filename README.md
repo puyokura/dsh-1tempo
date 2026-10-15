@@ -9,10 +9,9 @@
   ↓ 承認済みの MiL を、dsh で選択中のモデルへ渡す
 ```
 
-- 企画の原案: [proposal.md](proposal.md)
 - 確定設計: [architecture.md](architecture.md)
-- 質疑応答・実測記録・根拠: [qa-record.md](qa-record.md)
 - dsh への要望（会話へ書く API）: [dsh-feature-request.md](dsh-feature-request.md)
+- 企画の原案・質疑応答・実測レポート（`proposal.md` / `qa-record.md` / `preflight-report-*.md`）はローカル記録のため、この公開リポジトリには含めていない。本文中の `preflight-report-run*.md` はその記録のファイル名を示す。
 
 ## 何をするか
 
@@ -135,7 +134,7 @@ node tools/preflight-decode.mjs --dry
 
 `prepend` は定義行を MiL の前に置く。原典の使用例（例A）と同じ運用で、対象モデルが MiL を知らない場合に復号が安定する。代わりにペイロードが定義行の分だけ長くなる。`off` は軽く、MiL のみを送る。
 
-どちらも復号テストに合格している（`preflight-report-run6-off.md` / `preflight-report-run7-prepend.md`）。**対象モデルが MiL を初めて見る場合は `prepend`、すでに文脈がある場合やトークンを抑えたい場合は `off`** を目安にする。
+どちらも復号テストに合格している（`preflight-report-run6-off.md` / `preflight-report-run7-prepend.md`。ローカル記録）。**対象モデルが MiL を初めて見る場合は `prepend`、すでに文脈がある場合やトークンを抑えたい場合は `off`** を目安にする。
 
 ## 記法（MiL）と本プラグインの立場
 
