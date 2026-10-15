@@ -1,0 +1,18 @@
+{
+  "name": "dsh-plugin-1tempo",
+  "version": "0.1.0",
+  "description": "MiL-Bridge: convert a Japanese request into MiL via the Sarashina API, get approval, and hand it to the selected dsh model",
+  "license": "MIT",
+  "author": "puyokura",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/puyokura/dsh-1tempo.git"
+  },
+  "type": "module",
+  "main": "index.mjs",
+  "private": true,
+  "scripts": {
+    "test": "node --test \"tests/*.test.mjs\"",
+    "preflight": "node tools/preflight-decode.mjs"
+  }
+}

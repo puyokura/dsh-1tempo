@@ -1,0 +1,69 @@
+# MiL の形式の見本
+#
+# 出所: 原典の定義本体に画像添付された使用例、および投稿群の短い実例
+# 取得方法: ユーザーが別途行った分析による転記（2026-10-14）
+# 検証: 当エージェントは画像を入力できないため、内容を独立検証していない
+#
+# 重要な区別:
+#   - 「原典の本文」は、著者が実際に書いた MiL の本文である。ただし内容は
+#     議論の分析・立場表明であり、依頼（命令）を符号化したものではない。
+#   - 「合成（本物ではない）」は、実例が枯渇したためユーザー分析が仕様書から
+#     作った参考例である。原典の使用例ではない。
+#
+# 形式の要点（原典の本文から読み取れること）:
+#   - 本文は <ラベル>:={key:value, …} または <目的>:=<操作>{…}∧<操作>{…} の形。
+#   - ラベルは話題に即した語（problem, fix, stance, q, need, metric, scope, causal）。
+#   - 定義の変数（C, R, del, ¬infer）は本文には現れない。
+#   - 記号 := { } ∧ → ↑ ↓ ∴ ∵ ≈ ⇒ ≫ と、日本語・英語の混在を使う。
+
+## 原典の本文 1（problem / 問題点指摘）
+
+problem:={tone:"AI crap_summary"→needless_attack,
+causal:keep(raw)→bench↑?∵other_method_changes,
+metric:"bench↑"/"perf↑↑"/"≈2×"→baseline∧metric∧setting missing,
+scope:WebShop→general continual_learning?=overgeneralize,
+strawman:prior_continual_learning≈"gain≈0→Δweights!"→false_simplify,
+term:¬RL→what_training? unclear,
+claim:"method_space→many improvable"→evidence? weak,
+quote_ctx:research_announcement→reader may misread your inference as paper_claim};
+fix:=separate{paper_claim,your_interpretation}∧quantify{benchmark,baseline,method}∧soften{prior_work,tone}
+
+## 原典の本文 2（stance / スタンス表明）
+
+stance:={mockery↓:agree,assertiveness↓:reject:X_post_quality↓(empirical)};
+
+q:=WebShop_desc such that {scope=WebShop_task,¬generalize→continual_learning,claim_strength=high};
+
+need:=better_wording
+
+## 原典の本文 3（rply / 返信分析。冒頭に定義行を宣言として置く例）
+
+rply MiL;C(m):=argmin_tok{s:⟦s⟧=m};R:=sym>logic>abbr>alias>>>EN;del(recoverable);IF:=cond;@:=ext;¬infer;amb→qmin
+
+AI new_task→insight;usual:insight→AI
+
+crap_summary→{SKILLs,docs/};info_loss≫0→waste?;alt:=keep(raw)∧summarize@use;result:=¬RL∧bench↑;LocalLLM+RL→perf↑↑;WebShop≈2×;prior continual_learning≈("current method→gain≈0;thus Δweights!");yet method_space→many improvable;ctx:=X post∧quote(research_announcement);?problem
+
+## 原典の短い本文（形式の参考）
+
+Σspec⊂P₋₁;AI←P₋₁⇒learn! welcome:=spk{MiL,JP}
+
+MiL:mastery✓✓!;txt=◎!
+
+agree↑; ... MiL≈UL_extreme? ... proto:=test(max_compress | shared_ctx↑).
+
+😂; 🇯🇵:{1glyph→m↑∧tok↓}; ⊕{∑,↔,≔,⚡,🧠}⇒MiL++; ∴ native_buff≈✓? 🚀
+
+actual:self already has SKILL{JP→MiL}!; reverse:=∅ ∵ readability(MiL)>readability(JP)
+
+## 合成（本物ではない）
+
+ユーザー分析が仕様書から作った参考例。原典の使用例ではない。
+
+model:={GPT-6.1 Sol, LFM2.5}; tok/s:local≈60 → Sol_max≈97 (theo=105); ∴ opt↑≫human_tune; era:=good
+
+goal:=trial_scale↑; bottleneck:=unknown_unknown; fix:=term_collect→AI_deepdive; shape:=thumbtack (broad_shallow + deep_specialty)
+
+claim:X→Y; evidence:=weak; scope_over:=generalize?; alt:=keep_raw∧measure_baseline; fix:=quantify∧soften_tone
+
+agree↑; mechanism_real≈yes; core≠brevity; :=constrain(expr)→constrain(thought); compress_until_ambiguity_breaks

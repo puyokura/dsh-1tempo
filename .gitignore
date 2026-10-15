@@ -1,0 +1,11 @@
+# API keys (never commit)
+.env
+
+# Local records that stay out of the public repository
+qa-record.md
+proposal.md
+preflight-report*.md
+preflight-decode-*.md
+
+# Tooling
+node_modules/

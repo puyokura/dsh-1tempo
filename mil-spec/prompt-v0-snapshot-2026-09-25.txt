@@ -1,0 +1,3 @@
+MiL;C(m):=argmin_tok{s:⟦s⟧=m};R:=sym>logic>abbr>alias>>>EN;del(recoverable);IF:=cond;@:=ext;¬infer;amb→qmin
+
+cstr≫C≫R; C:=argmin_tok{s:⟦s⟧_ctx=m}; tok:=active_tokenizer; R:=tie(C≈)→sym>logic>abbr>alias>EN; del(x)⇔recoverable(x|ctx); ¬infer:=¬unsupported_fact∧¬intent_fill(amb→qmin); @:=ext_only; IF:=cond; portability<density accepted; proto:=joke∴play_space≫0; yet lang_spec_complexity↑∧len↓⇒satisfaction↑; target:=GPT-family∴use@GPT⇒choice(this_reply)≈implicit_resolve; verified@GPT-6 Sol.

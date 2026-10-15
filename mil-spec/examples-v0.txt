@@ -1,0 +1,25 @@
+# 依頼 → MiL の見本（本プラグインが作成）
+#
+# 出所: 本プラグインが作成した。原典には依頼（命令）を符号化した実例が存在しない
+#       （mil-spec/author-examples.md §5-3）。
+# 形: mil-spec/reference-style.txt の「原典の本文」に合わせた <ラベル>:=<値> の列。
+# 状態: レビュー済み・採用（2026-10-14）。原典の仕様ではなく、本プラグインの
+#       プロンプト教材である。
+#
+# 前版（examples-v0-attempt1-wrong-shape.txt）は C:=…/R:=… という定義の変数を
+# 使う形で、原典の本文と一致していなかったため破棄した。
+
+依頼: いい感じのログイン画面を作って。スマホでも見やすく
+MiL: goal:=make(login_ui); usr:=mobile; f:=readable; amb→qmin{style?,stack?}
+
+依頼: ログを直近 100 行だけ確認して、エラーがあれば要約して
+MiL: goal:=check(log); scope:=last100; cond:=error_found→summarize
+
+依頼: READMEを直して。日本語で、簡潔に
+MiL: goal:=fix(README); lang:=JA; len:=short; amb→qmin{which_section?}
+
+依頼: 3Dモデルを作って
+MiL: goal:=make(3D_model); amb→qmin{obj?,fmt?}
+
+依頼: この関数を速くして。あと読みやすく
+MiL: goal:=opt(fn); metric:={spd↑,read↑}

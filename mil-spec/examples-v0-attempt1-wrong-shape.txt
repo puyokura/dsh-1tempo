@@ -1,0 +1,9 @@
+# MiL 実例 v0（凍結）
+#
+# 状態: 著者の仕様ではない。モデルが定義から作った下書きを人間が採用したもの。
+# 出所: mil-spec/examples-draft.md の例 1（生成 2026-10-14T13:14:20.158Z / sarashina3-nano（変換器は Sarashina 固定））
+# 手掛かり: mil-spec/prompt-v0-snapshot-2026-09-25.txt のみ（原典の使用例画像は未取得）
+# 変換: 定義と逐語一致する節を除去済み（stripSpecClauses）
+
+依頼: ログを直近 100 行だけ確認して、エラーがあれば要約して
+MiL: C:=argmin_tok{s:⟦s⟧_ctx=log∧len(s)≤100}; R:=tie(error_present)→summarize; ¬infer:=¬supported_operation∧¬intent_fill(amb→qmin)
