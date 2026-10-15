@@ -91,7 +91,30 @@ github:puyokura/dsh-1tempo
 
 エージェント経由なら `plugin_manager` ツールの `install_bundle` に同じ spec を渡す（Creator 系プリセットで有効。実行には `danger-full-access` か承認が要る）。
 
-### 2. プロファイルのパッチへ直接書く（手動・従来の方法）
+### 2. プロファイルへ CLI で入れる（bundle 方式）
+
+Web UI を使わない場合（サーバー上で動かす、ヘッドレスなど）は同じ操作を CLI で行う。
+
+```sh
+cd ~/.dsh/profiles/<プロファイル名>
+pnpm add github:puyokura/dsh-1tempo
+```
+
+次に `package.json` の `dsh.profile.bundles` の末尾へ `"dsh-plugin-1tempo"` を足す。`pnpm add` だけでは bundle は有効にならず、この 1 行が Install ボタンの仕事にあたる。
+
+```json
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "dsh-plugin-1tempo"
+      ],
+```
+
+- 反映は `patchReload: live` なら即時、そうでなければ dsh を再起動する。
+- 戻すときは `pnpm remove dsh-plugin-1tempo` と `bundles` からの削除。
+- サーバー側の Web UI で使う場合、`SARASHINA_API_KEY` は**そのサーバー**の `~/.dsh/.credentials.yaml` に置く。プラグインはコマンド実行時にキーを読むため、置いた時点で有効になる（再起動は不要）。
+
+### 3. プロファイルのパッチへ直接書く（手動・従来の方法）
 
 プロファイルのパッチ（例: `~/.dsh/profiles/dsh-tui/cordis.patch.yml`）の `insert:` に 1 行追加する。
 
@@ -106,12 +129,12 @@ github:puyokura/dsh-1tempo
 - `name` は `index.mjs` の絶対パス。Windows ではスラッシュ区切りで書く（例: `C:/Users/you/1tempo-pulgin/index.mjs`）。
 - `id` は設定画面が設定セクションを引く名前空間になる。`/^[a-z][a-z0-9_-]*$/` に一致する必要がある（`1tempo` は不可）。
 - `config` は省略可能。省略時は下記の既定値が使われる。
-- **1 と 2 を同じプロファイルで併用しない**（同じ `id: onetempo` が二重になる）。bundle として入れた場合は手動の行を消す。
+- **bundle として入れたプロファイルに、この手動の行を足さない**（同じ `id: onetempo` が二重になる）。すでに手動の行があるプロファイルへ bundle を入れるときは、先に手動の行を消す。
 - 読み込みに失敗すると dsh の起動がロールバックする。戻すときはこの 4 行を削除する。
 
 ### Web UI（プロファイル `web`）
 
-同じ `insert:` 行を `~/.dsh/profiles/web/cordis.patch.yml` にも置く。プラグインはどちらのホストでも動く（接点は実行時に選ばれる）。
+同じ手順（上記 1 か 2）を web プロファイルへ行う。手動で入れる場合だけ、`insert:` 行を `~/.dsh/profiles/web/cordis.patch.yml` に置く。プラグインはどちらのホストでも動く（接点は実行時に選ばれる）。
 
 | 用途 | TUI（`dsh-tui`） | Web UI |
 | --- | --- | --- |
