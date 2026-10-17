@@ -17,6 +17,9 @@
  *     and abort REJECT, so the caller owns an AbortSignal and must bound it
  *     itself. `tuiDialogs` does not exist in the web host, and `userQuestions`
  *     is mounted by both hosts, so the question path is the host-neutral one.
+ *     The shipped WEB answerer is Agent-scoped: a request without `agent`
+ *     reaches no answerer and rejects with NO_PROVIDER (measured 2026-10-17),
+ *     so every call passes the live agent the flow will also deliver to.
  *
  * A seam that is absent returns `unavailable` instead of throwing: the caller
  * reports it, and the flow fails closed (no unreviewed send).
@@ -68,10 +71,13 @@ function describe(error) {
  *   | { status: 'timed-out' }
  *   | { status: 'unavailable', reason: string }>}
  */
-async function askText(questions, { header, question, detail, timeoutMs }) {
+async function askText(questions, { header, question, detail, timeoutMs, agent }) {
   const controller = new AbortController()
   const asked = questions.ask({
     questions: [{ id: QUESTION_ID, header, question, detail }],
+    // A request without an agent scope reaches no answerer in the web host, so
+    // the card never renders and the seam fails closed with NO_PROVIDER.
+    ...agent === undefined ? {} : { agent },
     signal: controller.signal,
   })
   // The race may return first; keep a late rejection from becoming unhandled.
@@ -115,9 +121,9 @@ async function askText(questions, { header, question, detail, timeoutMs }) {
  *
  * @param {import('@deepseek-ai/cordis').Context} ctx
  * @param {{ title: string, header?: string, question: string, initial?: string,
- *           timeoutMs: number }} request
+ *           timeoutMs: number, agent?: object }} request
  */
-export async function requestText(ctx, { title, header, question, initial, timeoutMs }) {
+export async function requestText(ctx, { title, header, question, initial, timeoutMs, agent }) {
   const dialogs = pickTuiDialogs(ctx)
   if (dialogs) {
     try {
@@ -140,6 +146,7 @@ export async function requestText(ctx, { title, header, question, initial, timeo
     question,
     detail: initial,
     timeoutMs,
+    agent,
   })
 }
 
@@ -150,7 +157,7 @@ export async function requestText(ctx, { title, header, question, initial, timeo
  *
  * @returns {Promise<{ status: 'confirmed' | 'declined' | 'timed-out' | 'unavailable', reason?: string }>}
  */
-export async function requestDecision(ctx, { title, question, confirmLabel, cancelLabel, timeoutMs }) {
+export async function requestDecision(ctx, { title, question, confirmLabel, cancelLabel, timeoutMs, agent }) {
   const dialogs = pickTuiDialogs(ctx)
   if (dialogs) {
     try {
@@ -174,6 +181,7 @@ export async function requestDecision(ctx, { title, question, confirmLabel, canc
       question,
       options: [{ label: cancelLabel }, { label: confirmLabel }],
     }],
+    ...agent === undefined ? {} : { agent },
     signal: controller.signal,
   })
   asked.catch(() => {})

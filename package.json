@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-1tempo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MiL-Bridge: convert a request into MiL with Sarashina, review it, then hand it to the model dsh is running (TUI and Web UI)",
   "license": "MIT",
   "author": "puyokura",

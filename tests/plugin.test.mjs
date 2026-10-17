@@ -258,6 +258,22 @@ test('the plugin exports its identity and registers the command', async () => {
   }
 })
 
+test('the registered command declares an input hint', async () => {
+  // Regression: dsh-client-ui-commands' `matchEnter` executes `/name args` only
+  // when the descriptor declares `input`. Without the hint the web composer
+  // submitted `/onetempo こんにちは` to the model as ordinary text (measured
+  // 2026-10-17). The hint must stay a non-empty string: dsh-commands rejects an
+  // empty one at registration.
+  const box = await setup()
+  try {
+    const hint = box.definition?.input?.hint
+    assert.equal(typeof hint, 'string')
+    assert.ok(hint.trim().length > 0, 'input.hint must not be empty')
+  } finally {
+    box.restore()
+  }
+})
+
 test('a full run converts, substitutes, delivers, and logs', async () => {
   const box = await setup({ responses: [jsonResponse(200, completion(MIL_RAW))], dialogs: APPROVING })
   try {
@@ -584,6 +600,9 @@ test('the web host reviews the MiL through a free-text question', async () => {
     assert.equal(asked.length, 1)
     assert.equal(asked[0].questions[0].detail, MIL_WIRE)
     assert.equal(asked[0].questions[0].options, undefined)
+    // The shipped web answerer is Agent-scoped: a request without the live
+    // agent reaches no answerer (NO_PROVIDER) and its card never renders.
+    assert.equal(asked[0].agent, box.agentsBox.agent)
     // The log went through the storage domain, not the TUI namespace.
     assert.equal(domain.rows.get('entries').length, 1)
     assert.equal(box.storageBox.data.entries, undefined)

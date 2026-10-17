@@ -83,6 +83,48 @@ test('requestText falls back to a free-text question with the value in detail', 
   // No prefill field exists on this seam, so the current value rides `detail`.
   assert.equal(question.detail, 'CURRENT')
   assert.equal(question.options, undefined)
+  // No agent was supplied here: the request goes to the unscoped waterfall.
+  assert.equal(requests[0].agent, undefined)
+})
+
+test('requestText forwards the live agent so the agent-scoped web answerer receives it', async () => {
+  const requests = []
+  const agent = { id: 'root-agent' }
+  const ctx = makeCtx({
+    userQuestions: {
+      async ask(request) {
+        requests.push(request)
+        return { answers: [{ id: 'mil', selected: [], custom: '' }] }
+      },
+    },
+  })
+  const result = await requestText(ctx, { title: 't', question: 'q', timeoutMs: 50, agent })
+  assert.equal(result.status, 'text')
+  assert.equal(requests.length, 1)
+  assert.equal(requests[0].agent, agent)
+})
+
+test('requestDecision forwards the live agent too', async () => {
+  const requests = []
+  const agent = { id: 'root-agent' }
+  const ctx = makeCtx({
+    userQuestions: {
+      async ask(request) {
+        requests.push(request)
+        return { answers: [{ id: 'mil', selected: ['原文を送る'] }] }
+      },
+    },
+  })
+  const result = await requestDecision(ctx, {
+    title: 't',
+    question: 'q',
+    confirmLabel: '原文を送る',
+    cancelLabel: '中止',
+    timeoutMs: 50,
+    agent,
+  })
+  assert.equal(result.status, 'confirmed')
+  assert.equal(requests[0].agent, agent)
 })
 
 test('requestText returns empty text when the user leaves the answer blank', async () => {

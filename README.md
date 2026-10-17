@@ -145,6 +145,8 @@ pnpm add github:puyokura/dsh-1tempo
 
 - TUI 固有の 3 サービス（`tuiPluginHost` / `tuiDialogs` / `tuiPluginStorage`）は Web ホストに存在しない。`ctx.storageDomain` は逆に TUI ホストに mount されていない（実測 2026-10-15）。
 - どちらの対話接点も無い構成では、MiL を表示するだけで**送信しない**（未確認の送信を避ける）。
+- 引数つきで実行させるには **`input.hint` の宣言が要る**。Web の入力判定（`dsh-client-ui-commands` の `matchEnter`）は `input` を持つコマンドだけを引数つき行として実行し、無い場合はその行をそのままメッセージとして送る（実測 2026-10-17）。
+- `ctx.userQuestions.ask()` には**解決済みの agent を渡す**。Web の回答器は live な Agent スコープの要求だけを受け、agent 無しでは `NO_PROVIDER` になってカードが出ない（実測 2026-10-17）。
 
 ## 設定
 
@@ -255,10 +257,10 @@ node --env-file=.env tools/preflight-decode.mjs --decode-only preflight-report-r
 
 | 項目 | 状態 |
 | --- | --- |
-| 単体・統合テスト | 173 件通過（実プロセスで実行） |
+| 単体・統合テスト | 176 件通過（実プロセスで実行） |
 | 変換（Sarashina → MiL） | **実測で確認**。実例の形を原典の本文に合わせた時点で成立した（`preflight-report-run6-off.md` / `run7-prepend.md`） |
 | 復号（spec なしで対象モデルが読めるか） | **実測で確認**（commandcode の無料モデル）。ユーザーの本番モデルでは未検証 |
-| dsh の接点 | コマンド登録・変換・承認ダイアログ・編集ダイアログ・編集の取り消し（Esc で中止）・送信（`agents.followup`。会話に MiL が自分の発言として出ることをユーザーが確認）は**実機で動作**。storage への記録内容は未確認 |
+| dsh の接点 | コマンド登録・変換・承認ダイアログ・編集ダイアログ・編集の取り消し（Esc で中止）・送信（`agents.followup`。会話に MiL が自分の発言として出ることをユーザーが確認）は**実機で動作**。storage への記録は web 経路で実測（`~/.dsh/storages/tempo_bridge.json`、`ログ: 保存しました（2 件）`）。引数つき実行（`/onetempo こんにちは`）と承認カードの表示・編集送信も実機 web で確認（2026-10-17） |
 | 変換レポートの表示 | **通知欄のみ**（200 セル以内に整形）。会話へ出すプラグイン API が dsh に無い。要望は `dsh-feature-request.md` |
 | 対象モデルの選定 | 未確定（無料モデルで確認したのみ） |
 

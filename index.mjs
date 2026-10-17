@@ -32,7 +32,7 @@ import {
   validateMil,
 } from './src/mil.mjs'
 import { createSarashinaClient, describeSarashinaError } from './src/sarashina.mjs'
-import { cellWidth, composeDeliveryBody, deliver, flattenForHost, notification, recordConversion } from './src/delivery.mjs'
+import { cellWidth, composeDeliveryBody, deliver, flattenForHost, notification, recordConversion, resolveAgent } from './src/delivery.mjs'
 import { hasInteractionSeam, requestDecision, requestText } from './src/interaction.mjs'
 import { openStorageDomainHandle } from './src/storage-domain.mjs'
 import { softGet } from './src/seams.mjs'
@@ -87,6 +87,15 @@ function createHandler(ctx, config, store) {
 
     if (parsed.kind === 'help') return { kind: 'success', text: `1tempo\n\n${USAGE}` }
     if (parsed.kind === 'error') return { kind: 'error', text: `1tempo\n\n${parsed.reason}\n\n${USAGE}` }
+
+    // The web host's question answerer is scoped to a live agent: a request
+    // without an agent scope reaches no answerer and fails closed with
+    // NO_PROVIDER, so the review dialog never appears in the browser
+    // (dsh-user-questions README, "Agent-scoped Web answering"; measured
+    // 2026-10-17). Resolve once, with the same preference order the delivery
+    // uses, and hand it to every question.
+    const agentRegistry = softGet(ctx, 'agents')
+    const answerAgent = agentRegistry && typeof agentRegistry.list === 'function' ? resolveAgent(agentRegistry).agent : undefined
 
     const apiKey = await resolveApiKey(ctx, 'SARASHINA_API_KEY')
     if (typeof apiKey !== 'string' || apiKey.trim().length === 0) {
@@ -150,6 +159,7 @@ function createHandler(ctx, config, store) {
         confirmLabel: '原文を送る',
         cancelLabel: '中止',
         timeoutMs: config.dialogTimeoutMs,
+        agent: answerAgent,
       })
       if (decision.status === 'unavailable') {
         return {
@@ -276,6 +286,7 @@ function createHandler(ctx, config, store) {
         question: 'MiL を確認してください。修正する場合は修正後の MiL を貼り付けてください（空のまま送ると、この MiL をそのまま送ります）。',
         initial: candidate,
         timeoutMs: config.dialogTimeoutMs,
+        agent: answerAgent,
       })
       if (reviewed.status === 'unavailable') {
         return {
@@ -362,6 +373,13 @@ export function apply(ctx, pluginConfig = {}) {
     definitionId: 'onetempo',
     name: 'onetempo',
     description: 'Convert a request to MiL via Sarashina, approve it, and hand it to the selected model',
+    // The `input` hint is not decoration: the web composer derives Enter
+    // adjudication from it. dsh-client-ui-commands' `matchEnter` runs a line
+    // that carries arguments (`/name args`) only when the descriptor declares
+    // `input`; without it the same line is submitted to the model as ordinary
+    // text (measured 2026-10-17). That branch requires a non-empty hint, so the
+    // usage string doubles as one.
+    input: { hint: '[mini|nano] [back] <依頼文>' },
     handler: async (invocation) => {
       try {
         const result = await handler(invocation)
